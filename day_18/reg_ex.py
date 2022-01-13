@@ -7,17 +7,15 @@ import re
 #  1. What is the most frequent word in the following paragraph?
 def get_wordcount(sentence):
     repattern = r'[A-Za-z]*[^\W]' #All words followed by either non word
-    wordset = set(re.findall(repattern, sentence, re.I))
+    wordset = set(re.findall(repattern, sentence, re.I)) #Define as set to avoid duplicate items
 
-    print(wordset)
-
-    word_count_list = []
+    word_count_list = [] #
 
     for i in wordset:
-        word_tup = (len(re.findall(i + '\W', sentence)), i) # Returns (count,word) - Count is Len of word followed by non-word character (i.e 'a ' or 'teach.')
-        word_count_list.append(word_tup)
+        word_tup = (len(re.findall(i + '\W', sentence)), i) #Tupe of (count, word) where count is # of times word occured [ regex = word followed by non-word char (' ', '.')]
+        word_count_list.append(word_tup) #Append tuple to list of tuple word coutns
 
-    return sorted(word_count_list, reverse=True)
+    return sorted(word_count_list, reverse=True) #Return sorted list in Ascending order
 
 paragraph = """I love teaching. If you do not love teaching what else can you love. 
             I love Python if you do not love something which can give you all the 
@@ -72,20 +70,20 @@ print(f'{points[-1]} - {points[0]} = {distance}')
 
 # 1. Write a pattern which identifies if a string is a valid python variable
 
-def is_valid_variable(text):
-    repattern = r'^[A-Za-z|_][A-Za-z0-9_]*$'
+def is_valid_variable(text): 
+    repattern = r'^[A-Za-z|_][A-Za-z0-9_]*$' #Verify text startes with A-Za-z or '_' and is followed by alpha numberic chars + '_' to end of string
     if re.match(repattern,text) != None:
-        print("True")
+        #print("True")
         return True
     else:
-        print("False")
+        #print("False")
         return False
 
 
-is_valid_variable('first_name') # True
-is_valid_variable('first-name') # False
-is_valid_variable('1first_name') # False
-is_valid_variable('firstname') # True
+print(is_valid_variable('first_name')) # True
+print(is_valid_variable('first-name'))# False
+print(is_valid_variable('1first_name')) # False
+print(is_valid_variable('firstname')) # True
 
 
 
@@ -96,9 +94,7 @@ is_valid_variable('firstname') # True
 
 sentence = '''%I $am@% a %tea@cher%, &and& I lo%#ve %tea@ching%;. There $is nothing; &as& mo@re rewarding as educa@ting &and& @emp%o@wering peo@ple. ;I found tea@ching m%o@re interesting tha@n any other %jo@bs. %Do@es thi%s mo@tivate yo@u to be a tea@cher!?'''
 
-repattern = r'[^A-Za-z0-9\.\?\s]{1}'
+repattern = r'[^A-Za-z0-9\.\?\s]{1}' # Math all non Alpha-numeric Characters, '.', '?', spaces
 
-print(re.sub(repattern,'',sentence))
-
-print(*get_wordcount(re.sub(repattern,'',sentence)), sep='\n')
+print(*get_wordcount(re.sub(repattern,'',sentence)), sep='\n') #pass cleaned text to previously defined word_count function
 
