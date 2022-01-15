@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 import re
 import json
+import csv
 
 
 # ### Exercises: Level 1
@@ -123,13 +124,18 @@ print(*most_populated_countries('./day_19/countries_data.json', 3), sep='\n')
 print()
 print(*most_populated_countries('./day_19/countries_data.json', 10), sep='\n')
 
-# print()
-# print(*most_populated_countries('./day_19/countries_data.json', 10), sep='\n')
-
 
 # ### Exercises: Level 2
 
 # 4. Extract all incoming email addresses as a list from the email_exchange_big.txt file.
+def get_from_addresses(email_txtObj):
+    data = email_txtObj.read() 
+    emails = set([x for x in re.findall('([a-z\.]+@[a-z\.]+)', data) if 'localhost' not in x]) #Return list of emails excluding items containing 'localhost'
+    return emails
+
+with open('./day_19/email_exchange_big.txt','r') as f:
+    print(get_from_addresses(f))
+
 # 5. Find the most common words in the English language. Call the name of your function find_most_common_words, it will take two parameters - a string or a file and a positive integer, indicating the number of words. Your function will return an array of tuples in descending order. Check the output
 
 # ```py
@@ -155,17 +161,62 @@ print(*most_populated_countries('./day_19/countries_data.json', 10), sep='\n')
 #     (6, 'of'),
 #     (5, 'and')]
 # ```
+def find_most_common_words(txt, comCount):
+    wc_dict = {}
+    words = re.findall('[\w\d]+',txt)
+    for i in words:
+        if i in wc_dict.keys():
+            wc_dict[i] += 1
+        else:
+            wc_dict[i] = 1
+
+    return sorted([(v,k) for k,v in wc_dict.items()][:comCount],reverse=True)
+
+with open('./day_19/email_exchange_big.txt','r') as f:
+    print(find_most_common_words(f.read(), 10))
 
 # 6. Use the function, find_most_frequent_words to find:
 #    a) The ten most frequent words used in [Obama's speech](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/obama_speech.txt)
 #    b) The ten most frequent words used in [Michelle's speech](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/michelle_obama_speech.txt)
 #    c) The ten most frequent words used in [Trump's speech](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/donald_speech.txt)
 #    d) The ten most frequent words used in [Melina's speech](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/melina_trump_speech.txt)
+
+speeches = {
+    'DT_speech':'./day_19/donald_speech.txt', 
+    'BO_speech':'./day_19/obama_speech.txt',
+    'MT_speech':'./day_19/melina_trump_speech.txt',
+    'MO_speech':'./day_19/michelle_obama_speech.txt'
+}
+
+for k,v in speeches.items():
+    with open(v, 'r') as k:
+        print(v.split('/')[2],': \t',find_most_common_words(k.read(), 10))
+
 # 7. Write a python application that checks similarity between two texts. It takes a file or a string as a parameter and it will evaluate the similarity of the two texts. For instance check the similarity between the transcripts of [Michelle's](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/michelle_obama_speech.txt) and [Melina's](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/melina_trump_speech.txt) speech. You may need a couple of functions, function to clean the text(clean_text), function to remove support words(remove_support_words) and finally to check the similarity(check_text_similarity). List of [stop words](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/stop_words.py) are in the data directory
 # 8. Find the 10 most repeated words in the romeo_and_juliet.txt
+
+with open('./day_19/romeo_and_juliet.txt') as f:
+    print('Romeo And Juliet: \t', find_most_common_words(f.read(), 10))
+
 # 9. Read the [hacker news csv](https://github.com/Asabeneh/30-Days-Of-Python/blob/master/data/hacker_news.csv) file and find out:
 #    a) Count the number of lines containing python or Python
 #    b) Count the number lines containing JavaScript, javascript or Javascript
 #    c) Count the number lines containing Java and not JavaScript
+
+def count_regEx(csv_Obj,regEx):
+    csv_reader = csv.reader(csv_Obj, delimiter=',')
+    count = 0
+    for row in csv_reader:
+        for i in row:
+            count += len(re.findall(regEx,i))
+
+    csv_Obj.seek(0) #Reset back to start of file
+    return count
+
+with open('./day_19/hack_news.csv','r') as f:
+    print(count_regEx(f, r'[Pp]ython'))
+    print(count_regEx(f, r'Java'))    
+    print(count_regEx(f, r'Java[Ss]cript'))
+
 
 # ### Exercises: Level 3
